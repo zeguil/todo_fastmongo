@@ -10,8 +10,8 @@ client = TestClient(app)
 
 def test_create_task():
     task_data = {
-        'title': 'Test Task',
-        'description': 'This is a test task',
+        'title': 'Teste Task',
+        'description': 'Essa é uma task test',
         'completed': False,
     }
 
@@ -27,8 +27,8 @@ def test_create_task():
 
 def test_create_task_is_none():
     task_data = {
-        'title': 'Test Task',
-        'description': 'This is a test task',
+        'title': 'Teste Task',
+        'description': 'Essa é uma task test',
         'completed': False,
     }
 
@@ -44,3 +44,22 @@ def test_create_task_is_none():
     assert db_task['description'] == task_data['description']
     assert db_task['completed'] == task_data['completed']
     assert 'created_at' in db_task
+
+
+def test_read_tasks():
+    tasks_in_db = [
+        {
+            'title': 'Task 1',
+            'description': 'Descricao 1',
+            'completed': False,
+        },
+        {'title': 'Task 2', 'description': 'Descricao 2', 'completed': True},
+    ]
+    collection.insert_many(tasks_in_db)
+
+    response = client.get('/tasks/')
+    assert response.status_code == HTTPStatus.OK
+
+    returned_tasks = response.json()
+    assert type(returned_tasks) is list
+    assert len(returned_tasks) == len(tasks_in_db)
